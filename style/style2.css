@@ -1,0 +1,332 @@
+@import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500,700&display=swap");
+
+/* Grundlegende Stile */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: rgba(20, 20, 20, 0.9); 
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    height: 100vh; 
+    background-image: linear-gradient(62deg, rgba(1, 95, 183, 0.973) 13%, rgba(255, 122, 151, 0.5) 4%),
+                      linear-gradient(44deg, rgba(0, 43, 99, 0.1) 39%, rgba(242, 140, 143, 0.3) 18%);
+    background-blend-mode: normal, lighten;
+
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header */
+header {
+    background-color: transparent;
+    padding: 0;
+    width: 100%;
+    max-width: 470px;
+    position: relative;
+    text-align: center;
+}
+
+header > h1 > div.left {
+    display: flex;
+    justify-content: flex-start;
+}
+
+header > h1 > div.right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+header h1 button {
+    width: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #eee;
+    font-size: 1.2em;
+}
+
+header h1 button > span:hover {
+    color: #bbb;
+}
+
+/* Typographie */
+h1 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+h2 {
+    font-size: 12px;
+    font-weight: 100;
+    color: #bbb; 
+    margin:20px;
+}
+
+h2 a {
+    text-decoration: underline;
+    color: #ff86ef;
+}
+
+/* Info Container */
+.info-container {
+    position: absolute;
+    width: 200px;
+    height: 400px;
+    padding: 20px;
+    transform: translate(375px, 0);
+    color:#bbb;
+}
+.info-container h1 {
+    font-size:16px;
+    margin:0;
+    padding:0;
+    color:#bbb;
+}
+
+/* Main Container */
+main.todo-container {
+    text-align: center;
+    font-size: 18px; 
+    margin: 0;
+}
+
+.todo-container > h1 {
+    margin:0 0 20px 0;
+    padding:0 10px;
+}
+
+.todo-container {
+    background-color: rgba(30, 30, 30, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 425px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
+    position: relative;
+    text-align: center;
+}
+
+footer {
+    background-color: transparent;
+    padding: 0 20px;
+    width: 100%;
+    max-width: 425px;
+    position: relative;
+    text-align: center;
+}
+
+/* Schaltflächen */
+button {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn#add-btn {
+    background-color: transparent;
+    padding: 0 5px;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+.icon-btn#add-btn span {
+    font-size: 28px;
+}
+
+.icon-btn#add-btn:hover {
+    background-color: #ee9ca7;
+}
+
+.delete-btn {
+    background-color: transparent;
+    color: #e53935;
+    padding: 4px;
+    border-radius: 5px;
+    visibility: visible;
+    margin-left: auto;
+    width: 24px;
+    height: 24px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+li:hover .delete-btn {
+    display: flex;
+}
+
+/* Listen */
+ul {
+    list-style-type: none; 
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    background-color: #2c2c3e; 
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 8px; 
+    font-size: 16px; 
+    position: relative; 
+}
+
+/* Aufgabenstatus */
+.completed {
+    opacity: 0.5;
+    background: #222;
+}
+
+.completed span.todo-text {
+    text-decoration: line-through;
+    opacity: 0.6; 
+    font-style: italic;
+}
+
+/* Eingabefelder */
+.input-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+input[type="text"], textarea {
+    flex-grow: 1;
+    padding: 8px 12px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-size: 16px;
+    border-bottom: 2px solid #ff86ef;
+    border-radius: 5px;
+    resize: none;
+    overflow: hidden;
+}
+
+/* Checkbox */
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.checkbox input {
+    display: none; 
+}
+
+.checkbox span {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #aaa; 
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: transparent; 
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.checkbox input:checked + span {
+    background-color: #379c76; 
+    border-color: #2c2c2c; 
+}
+
+.checkbox input:checked + span::after {
+    content: '✓'; 
+    color: #fff; 
+    position: absolute;
+    font-size: 14px;
+    font-weight: bold; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+}
+
+/* Material Symbols */
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+}
+
+header h1 span.material-symbols-outlined {
+    font-size: 32px;
+}
+
+/* Quest ID-Anzeige */
+.quest-id-display {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+#quest-id {
+    font-weight: bold;
+    color: #ff86ef;
+}
+
+#copy-quest-id {
+    text-decoration: none;
+    background-color: rgba(30, 30, 30, 0.9);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#copy-quest-id:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.quest-id-description {
+    font-size: 12px;
+    color: #bbb;
+    margin: 0 0 15px 0;
+}
+
+/* Sonstige */
+.divider {
+    border: none;
+    height: 1px;
+    background-color: #444;
+    margin: 0 0 10px 0;
+}
+
+.overlay {
+    background-image: none;
+    background-blend-mode: normal;
+}
+
+.show {
+    display: block !important;
+}
+
+.hide {
+    display: none;
+}
+
+.glass {
+    opacity: 0.1;
+}

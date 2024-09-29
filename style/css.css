@@ -1,0 +1,185 @@
+/* Importiere die Schriftart */
+@import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500,700&display=swap");
+
+/* Grundlegende Stile für den gesamten Körper */
+body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: rgba(20, 20, 20, 0.9); /* Dunklerer Hintergrund */
+    color: #ffffff;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Höhe des Viewports einnehmen */
+    background-image: linear-gradient(62deg, rgba(1, 95, 183, 0.973) 13%, rgba(255, 122, 151, 0.5) 4%),
+                      linear-gradient(44deg, rgba(0, 43, 99, 0.1) 39%, rgba(242, 140, 143, 0.3) 18%);
+    background-blend-mode: normal, lighten;
+}
+
+/* Überschrift Stile */
+h1, h2 {
+    text-align: left;
+    margin: 0 0 10px;
+    color: #ddd; /* Hellere Farbe für bessere Lesbarkeit */
+    font-size: 14px; /* Größere Schriftgröße */
+    font-weight: 500; /* Stärkeres Gewicht */
+}
+
+h1 {
+    color: #ffffff; /* Farbe für h1 */
+}
+
+h2 {
+    opacity: 0.7; /* Leicht erhöhte Sichtbarkeit */
+}
+
+h2 a {
+    text-decoration: underline;
+    color: #ff86ef; /* Farbe für Links in h2 */
+}
+
+/* Container für die Todos */
+.todo-container {
+    background-color: rgba(30, 30, 30, 0.95); /* Etwas transparenter für mehr Tiefe */
+    padding: 10px; /* Größeres Padding */
+    border-radius: 10px; /* Rundere Ecken */
+    width: 100%;
+    max-width: 400px; /* Größere maximale Breite */
+    margin: 10px; /* Mehr Abstand */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Schatten für Tiefe */
+}
+
+/* Eingabefeld Container */
+.input-container {
+    display: flex;
+    gap: 8px; /* Größerer Abstand zwischen Elementen */
+    margin-bottom: 10px; /* Mehr Abstand unten */
+}
+
+/* Stile für Textfelder */
+input[type="text"] {
+    flex-grow: 1;
+    padding: 8px 12px; /* Größeres Padding */
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1); /* Leicht transparentes Hintergrund */
+    color: #ffffff;
+    font-size: 16px; /* Größere Schriftgröße */
+    border-bottom: 2px solid #ff86ef; /* Dickere untere Grenze */
+    border-radius: 5px; /* Rundere Ecken */
+}
+
+/* Standardbutton-Stile */
+button {
+    border: none;
+    border-radius: 5px; /* Rundere Ecken */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Spezielle Stile für die Add-Schaltfläche */
+.icon-btn#add-btn {
+    background-color: #ff86ef; /* Einheitliche Hintergrundfarbe */
+    padding: 6px;
+    color: #fff;
+    transition: background-color 0.3s; /* Übergang für Hover */
+}
+
+.icon-btn#add-btn:hover {
+    background-color: #ee9ca7; /* Hover-Effekt */
+}
+
+/* Stile für die Löschen-Schaltfläche */
+.delete-btn {
+    background-color: transparent;
+    color: #e53935;
+    padding: 4px;
+    border-radius: 5px;
+    display: none;
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Löschen-Schaltfläche beim Hover anzeigen */
+li:hover .delete-btn {
+    display: flex;
+}
+
+/* Checkbox-Stile */
+/* Checkbox Container */
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; /* Cursor ändern, um anzuzeigen, dass es klickbar ist */
+    margin-right: 10px; /* Abstand zwischen Checkbox und Text */
+}
+
+/* Verstecke das native Checkbox-Element */
+.checkbox input {
+    display: none; /* Verstecke die native Checkbox */
+}
+
+/* Benutzerdefinierte Checkbox-Stile */
+.checkbox span {
+    width: 20px; /* Breite der Checkbox */
+    height: 20px; /* Höhe der Checkbox */
+    border: 2px solid #aaa; /* Rahmenfarbe */
+    border-radius: 4px; /* Leicht abgerundete Ecken */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: transparent; /* Hintergrundfarbe transparent */
+    transition: background-color 0.3s, border-color 0.3s; /* Übergangseffekte für Farben */
+}
+
+/* Checkbox-Status: Checked */
+.checkbox input:checked + span {
+    background-color: #ee9ca7; /* Hintergrundfarbe, wenn ausgewählt */
+    border-color: #ee9ca7; /* Rahmenfarbe, wenn ausgewählt */
+}
+
+/* Häkchen anzeigen, wenn die Checkbox ausgewählt ist */
+.checkbox input:checked + span::after {
+    content: '✓'; /* Häkchen-Icon */
+    color: #fff; /* Häkchenfarbe */
+    position: absolute;
+    font-size: 14px; /* Größe des Häkchens */
+    font-weight: bold; /* Gewicht des Häkchens */
+    top: 50%; /* Zentriere vertikal */
+    left: 50%; /* Zentriere horizontal */
+    transform: translate(-50%, -50%); /* Verschiebe um die Hälfte der Breite/Höhe */
+}
+
+
+/* Listenelemente */
+ul {
+    list-style-type: none; /* Keine Standard-Aufzählungszeichen */
+    padding: 0;
+    margin: 0;
+}
+
+/* Listenelemente */
+li {
+    display: flex;
+    align-items: center;
+    background-color: #2c2c3e; /* Etwas hellere Farbe für Listenelemente */
+    padding: 8px; /* Größeres Padding */
+    margin-bottom: 10px; /* Mehr Abstand */
+    border-radius: 8px; /* Rundere Ecken */
+    font-size: 16px; /* Größere Schriftgröße */
+    position: relative; /* Ermöglicht relative Positionierung des Delete-Buttons */
+}
+
+/* Stil für ausgefüllte Todos */
+.completed span.todo-text {
+    text-decoration: line-through;
+    opacity: 0.6; /* Bessere Sichtbarkeit */
+    font-style: italic;
+}

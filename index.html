@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/style2.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>QuestBoard</title>
+</head>
+<body>
+    <div class="wrapper">
+
+            <header>
+                <h1>
+                    <!-- <button style="visibility: hidden;width:40px;"></button> -->
+                    <div class="left">
+                        <!--
+                        <button id="generate-new-id" title="Generate new name" aria-label="Generate new name">
+                            <span class="material-symbols-outlined">refresh</span>
+                        </button>
+                        <button id="generate-new-id" title="Generate new name" aria-label="Generate new name">
+                            <span class="material-symbols-outlined">refresh</span>
+                        </button>
+                        -->
+                    </div>
+                    <div class="right">
+                        <a href="#" id="copy-quest-id">
+                            #<span id="quest-id"></span>
+                        </a>
+                        <button id="generate-new-id" title="Generate new name" aria-label="Generate new name">
+                            <span class="material-symbols-outlined">refresh</span>
+                        </button>
+                    </div>
+                </h1>
+                <!--
+                <p class="quest-id-description">
+                    Click on your Questboard's name to copy the link.<br>
+                    Don not share it publicly, as others could access it.
+                </p>
+                -->
+            </header>
+
+            <main class="todo-container">
+                <h1 contenteditable="true">
+                    <span>Todays tasks</span>
+                </h1>
+                <div class="input-container">
+                    <button class="icon-btn" id="add-btn">
+                        <span class="material-symbols-outlined">new_label</span>
+                    </button>
+                    <input type="text" id="todo-input" placeholder="Neues To-Do hinzufügen">
+                </div>
+                <ul id="todo-list"></ul> <!-- Liste für die To-Dos -->
+            </main>
+
+            <footer>
+                <h2>QuestBoard - by <a href="https://www.twitch.tv/dabinuss" target="_blank">dabinuss</a></h2>
+            </footer>
+            <div class="info-container" style="display:none;">
+                <h1>Infoboard</h1>
+                <p></p>
+            </div>
+        </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

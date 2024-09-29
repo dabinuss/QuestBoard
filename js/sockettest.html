@@ -1,0 +1,15 @@
+<html>
+<body>
+  <h1>WebSocket Test</h1>
+  <button onclick="connectWebSocket()">Connect to WebSocket</button>
+  <script>
+    function connectWebSocket() {
+      const ws = new WebSocket('ws://127.0.0.1:8080');
+      ws.onopen = () => console.log('WebSocket connected');
+      ws.onmessage = (msg) => console.log('Received: ' + msg.data);
+      ws.onerror = (err) => console.error('WebSocket Error: ', err);
+      ws.onclose = () => console.log('WebSocket closed');
+    }
+  </script>
+</body>
+</html>
