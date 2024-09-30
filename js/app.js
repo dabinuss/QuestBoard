@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-test
+
     // Funktion zum Anzeigen der Metadaten im UI
     function displayMetaInfo(name, createdAt) {
         const nameElement = document.getElementById('quest-name'); // Beispiel-Element für den Namen
