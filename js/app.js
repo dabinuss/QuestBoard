@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('footer').classList.add('glass');
     }
 
+    // Funktion, um den Titel beim Laden der Seite zu setzen
+    function initializeTitle() {
+        const storedTitle = localStorage.getItem(`questTitle_${questId}`);
+        if (storedTitle) {
+            titleElement.textContent = storedTitle; // Setze den Titel in das Element
+        } else {
+            titleElement.textContent = 'TODO Liste'; // Setze einen Standardtitel, falls keiner vorhanden ist
+        }
+    }
+
+    // Initialisiere den Titel beim Laden der Seite
+    initializeTitle();
+
     // Zeige die aktuelle Quest-ID im HTML an
     displayQuestId(questId);
 
@@ -122,12 +135,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: newTitle }), // Sende die neue Listennamen
+                body: JSON.stringify({ name: newTitle }), // Sende nur den neuen Titel
             });
     
             const result = await response.json();
             if (response.ok) {
-                console.info('Titel aktualisiert:', result);
+                titleElement.textContent = newTitle; // Setze den neuen Titel im UI
+                localStorage.setItem(`questTitle_${questId}`, newTitle); // Speichere im Local Storage
+                console.info('Titel aktualisiert und gespeichert:', newTitle);
             } else {
                 alert(result.message || 'Fehler beim Aktualisieren des Titels');
             }

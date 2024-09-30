@@ -10,41 +10,54 @@ $directory = 'q';
 // Funktion zum Dateipfad basierend auf der ID
 function getFilePath($id) {
     global $directory;
-    return $directory . '/' . $id . '.json';
+    return "$directory/$id.json";
 }
 
-// Überprüfen, ob das Verzeichnis existiert, wenn nicht, dann erstellen
+// Überprüfen, ob das Verzeichnis existiert, und erstellen, falls nicht
 if (!is_dir($directory)) {
     mkdir($directory, 0777, true);
 }
 
 // Hilfsfunktion zum Antworten
-function jsonResponse($data) {
+function jsonResponse($data, $status = 200) {
+    http_response_code($status);
     echo json_encode($data);
-    exit;
+    exit();
 }
 
+// Funktion zur Generierung einer eindeutigen ID
 function getUniqueQuestId($id) {
-    // Überprüfe, ob die Datei existiert
     $file = getFilePath($id);
-    
-    // Falls die Datei existiert, generiere eine neue ID
     while (file_exists($file)) {
-        $randomChar = chr(rand(97, 122)); // Zufälliger Buchstabe (a-z)
-        $id .= $randomChar; // Hänge den Buchstaben an die ID an
-        $file = getFilePath($id); // Aktualisiere den Dateipfad mit der neuen ID
+        $id .= chr(rand(97, 122)); // Zufälliger Buchstabe (a-z)
+        $file = getFilePath($id);
     }
-
     return $id; // Gib die eindeutige ID zurück
 }
 
-
 // Hilfsfunktion zur Neuindizierung der To-Do-Nummern
 function reindexTodos($todos) {
-    foreach ($todos as $index => &$todo) {
+    return array_map(function ($todo, $index) {
         $todo['number'] = $index + 1; // Setze die Nummer basierend auf der Position im Array
+        return $todo;
+    }, $todos, array_keys($todos));
+}
+
+// Funktion zum Laden der To-Do-Liste
+function loadTodoList($file, $id) {
+    $todoList = json_decode(file_get_contents($file), true);
+    
+    // Fallback, falls die Datei im alten Format ist
+    if (!isset($todoList['id'], $todoList['name'], $todoList['created_at'])) {
+        $todoList = [
+            'id' => $id,
+            'name' => 'Standard To-Do Liste',
+            'created_at' => date('Y-m-d H:i:s'),
+            'todos' => $todoList
+        ];
     }
-    return $todos;
+
+    return $todoList;
 }
 
 // GET-Anfrage: Lade die To-Do-Datei
@@ -54,39 +67,20 @@ if ($method === 'GET') {
         
         // Überprüfe, ob die Anfrage nur zur ID-Überprüfung dient
         if (isset($_GET['check'])) {
-            // Wenn die Datei existiert, ist die ID nicht einzigartig
-            if (file_exists($file)) {
-                jsonResponse(['isUnique' => false]);
-            } else {
-                // Datei existiert nicht, ID ist einzigartig
-                jsonResponse(['isUnique' => true]);
-            }
+            jsonResponse(['isUnique' => !file_exists($file)]);
+        }
+
+        if (file_exists($file)) {
+            $todoList = loadTodoList($file, $id);
+            jsonResponse($todoList); // Gebe die gesamte Struktur zurück
         } else {
-            // Wenn keine 'check'-Abfrage vorliegt, lade die To-Do-Liste
-            if (file_exists($file)) {
-                $todoList = json_decode(file_get_contents($file), true);
-
-                // Überprüfen, ob die geladene Datei die neuen Eigenschaften enthält (id, name, created_at)
-                if (!isset($todoList['id']) || !isset($todoList['name']) || !isset($todoList['created_at'])) {
-                    // Fallback, falls die Datei in einem alten Format ist und diese Informationen nicht enthält
-                    $todoList = [
-                        'id' => $id,
-                        'name' => 'Standard To-Do Liste',
-                        'created_at' => date('Y-m-d H:i:s'),
-                        'todos' => $todoList
-                    ];
-                }
-
-                jsonResponse($todoList); // Gebe die gesamte Struktur zurück
-            } else {
-                // Datei existiert nicht, Rückgabe einer leeren Liste mit zusätzlichen Eigenschaften
-                jsonResponse([
-                    'id' => $id,
-                    'name' => 'Leere To-Do Liste',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'todos' => []
-                ]);
-            }
+            // Rückgabe einer leeren Liste mit zusätzlichen Eigenschaften
+            jsonResponse([
+                'id' => $id,
+                'name' => 'Leere To-Do Liste',
+                'created_at' => date('Y-m-d H:i:s'),
+                'todos' => []
+            ]);
         }
     } else {
         jsonResponse(['message' => 'Keine ID übergeben.'], 400);
@@ -100,25 +94,13 @@ if ($method === 'POST') {
     $listName = $data['name'] ?? 'Standard Liste'; // Standardname, falls kein Name übergeben wurde
 
     if ($newTask) {
-        if (!$id) {
-            // Wenn keine ID übergeben wurde, erstelle eine neue ID für die To-Do-Liste
-            $id = uniqid();
-        }
-
-        $file = getFilePath($id);
-
-        // Wenn die Datei existiert, lade die Liste mit den Metadaten und Aufgaben
-        if (file_exists($file)) {
-            $todoList = json_decode(file_get_contents($file), true);
-        } else {
-            // Initialisiere eine neue Liste mit Metadaten
-            $todoList = [
-                'id' => $id,
-                'name' => $listName,
-                'created_at' => date('c'), // ISO 8601 Format z.B. 2023-09-26T15:20:00+00:00
-                'todos' => []
-            ];
-        }
+        $file = getFilePath($id ?? uniqid()); // Wenn keine ID übergeben wurde, erstelle eine neue ID
+        $todoList = file_exists($file) ? json_decode(file_get_contents($file), true) : [
+            'id' => $id,
+            'name' => $listName,
+            'created_at' => date('c'),
+            'todos' => []
+        ];
 
         // Füge den neuen Task hinzu
         $todoList['todos'][] = ['task' => $newTask, 'completed' => false];
@@ -127,50 +109,63 @@ if ($method === 'POST') {
         $todoList['todos'] = reindexTodos($todoList['todos']);
 
         // Speichere die aktualisierte Liste in der Datei
-        file_put_contents($file, json_encode($todoList, JSON_PRETTY_PRINT)); // Option für bessere Lesbarkeit
-        jsonResponse(['message' => 'Task hinzugefügt', 'id' => $id, 'todos' => $todoList['todos']]);
+        file_put_contents($file, json_encode($todoList, JSON_PRETTY_PRINT));
+        jsonResponse(['message' => 'Task hinzugefügt', 'id' => $todoList['id'], 'todos' => $todoList['todos']]);
     } else {
         jsonResponse(['message' => 'Kein Task übermittelt'], 400);
     }
 }
 
-// PUT-Anfrage: Aktualisiere den Status eines Tasks
+// PUT-Anfrage: Aktualisiere den Status eines Tasks oder nur den Titel
 if ($method === 'PUT') {
     if ($id) {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $taskNumber = $data['taskNumber'] ?? null; // Fortlaufende Nummer des Tasks
-        $completed = $data['completed'] ?? null; // Neuer Status
+        $taskNumber = $data['taskNumber'] ?? null; // Fortlaufende Nummer des Tasks (optional)
+        $completed = $data['completed'] ?? null; // Neuer Status (optional)
         $newListName = $data['name'] ?? null; // Neuer Listenname
-
-        if ($taskNumber === null || $completed === null) {
-            jsonResponse(['message' => 'Ungültige Daten übermittelt'], 400);
-            exit;
-        }
 
         $file = getFilePath($id);
 
         if (file_exists($file)) {
             $todoList = json_decode(file_get_contents($file), true);
-
+            
             // Aktualisiere den Listennamen, wenn angegeben
-            if ($newListName !== null) {
-                $todoList['name'] = $newListName; // Aktualisiere den Namen
+            if ($newListName) {
+                $todoList['name'] = $newListName;
             }
-
-            // Suche den Task anhand der Nummer in der "todos"-Liste und aktualisiere den Status
-            foreach ($todoList['todos'] as &$todo) {
-                if ($todo['number'] === $taskNumber) {
-                    $todo['completed'] = $completed; // Aktualisiere den Status
-                    file_put_contents($file, json_encode($todoList, JSON_PRETTY_PRINT));
-                    jsonResponse(['message' => 'Task aktualisiert', 'todos' => $todoList['todos']]);
-                    return; // Beende die Funktion nach erfolgreicher Aktualisierung
+            
+            // Suche nach dem Task, wenn die Tasknummer angegeben ist
+            if ($taskNumber) {
+                foreach ($todoList['todos'] as &$todo) {
+                    if ($todo['number'] === $taskNumber) {
+                        if ($completed !== null) {
+                            $todo['completed'] = $completed; // Aktualisiere den Status, wenn angegeben
+                        }
+                        file_put_contents($file, json_encode($todoList, JSON_PRETTY_PRINT));
+                        jsonResponse(['message' => 'Task aktualisiert', 'todos' => $todoList['todos'], 'listName' => $todoList['name']]);
+                    }
                 }
+                jsonResponse(['message' => 'Task nicht gefunden'], 404);
+            } else {
+                // Wenn keine Tasknummer angegeben ist, aber der Titel aktualisiert wurde
+                file_put_contents($file, json_encode($todoList, JSON_PRETTY_PRINT));
+                jsonResponse(['message' => 'Titel aktualisiert', 'listName' => $todoList['name']]);
             }
-
-            jsonResponse(['message' => 'Task nicht gefunden'], 404);
         } else {
-            jsonResponse(['message' => 'Datei nicht gefunden'], 404);
+            // Wenn die Datei nicht existiert, erstelle sie mit der richtigen Struktur
+            if ($newListName) {
+                $todoList = [
+                    'id' => $id,
+                    'name' => $newListName,
+                    'created_at' => date(DATE_ISO8601), // Aktuelles Datum im ISO 8601 Format
+                    'todos' => [] // Leere Todo-Liste
+                ];
+                file_put_contents($file, json_encode($todoList, JSON_PRETTY_PRINT));
+                jsonResponse(['message' => 'Neue Liste erstellt und Titel gesetzt', 'listName' => $newListName, 'todos' => $todoList['todos']]);
+            } else {
+                jsonResponse(['message' => 'Ungültige Daten übermittelt'], 400);
+            }
         }
     } else {
         jsonResponse(['message' => 'Keine ID übermittelt'], 400);
@@ -183,9 +178,8 @@ if ($method === 'DELETE') {
         $data = json_decode(file_get_contents('php://input'), true);
         $taskNumber = $data['taskNumber'] ?? null; // Fortlaufende Nummer des Tasks
 
-        if ($taskNumber === null) {
+        if (!$taskNumber) {
             jsonResponse(['message' => 'Ungültige Daten übermittelt'], 400);
-            exit;
         }
 
         $file = getFilePath($id);
@@ -198,7 +192,7 @@ if ($method === 'DELETE') {
                 return $todo['number'] !== $taskNumber; // Behalte alle Todos, die nicht gelöscht werden
             });
 
-            // Neuindizieren der verbleibenden Tasks, um die Nummerierung fortlaufend zu halten
+            // Neuindizieren der verbleibenden Tasks
             $todoList['todos'] = reindexTodos(array_values($todoList['todos']));
 
             file_put_contents($file, json_encode($todoList, JSON_PRETTY_PRINT)); // Speichere die aktualisierte Liste
