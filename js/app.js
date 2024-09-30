@@ -40,6 +40,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Zeige/Verstecke das Dropdown-Menü beim Klick auf den Download-Button
+    document.getElementById('download-btn').addEventListener('click', () => {
+        const downloadOptions = document.getElementById('download-options');
+        const isDropdownVisible = downloadOptions.style.display === 'block';
+        downloadOptions.style.display = isDropdownVisible ? 'none' : 'block';
+    });
+
+    // Füge einen Klick-Event-Listener für jedes Dropdown-Element hinzu
+    document.querySelectorAll('#download-options li').forEach(item => {
+        item.addEventListener('click', async (event) => {
+            const format = event.target.getAttribute('data-format');
+            if (format) {
+                await downloadTodoAsFormat(format); // Ruft die Funktion auf, um die Datei herunterzuladen
+            }
+        });
+    });
+
+    // Funktion, um die ToDo-Datei im gewünschten Format herunterzuladen
+    async function downloadTodoAsFormat(format) {
+        try {
+            const response = await fetch(`server.php?download=true&id=${questId}&format=${format}`);
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `todos_${questId}.${format}`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                console.log(`Datei im Format ${format} wurde heruntergeladen.`);
+            } else {
+                console.error('Fehler beim Herunterladen der Datei:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Ein Fehler ist aufgetreten:', error);
+        }
+    }
+
     // Add event listener to the add button
     document.getElementById('add-btn').addEventListener('click', addTodo);
 

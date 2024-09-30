@@ -204,3 +204,103 @@ if ($method === 'DELETE') {
         jsonResponse(['message' => 'Keine ID übermittelt'], 400);
     }
 }
+
+
+// Haupt-Download-Logik
+if (isset($_GET['download']) && $_GET['download'] === 'true') {
+    $id = $_GET['id'] ?? null; // Die Quest-ID
+    $format = $_GET['format'] ?? 'json'; // Das gewünschte Format (standardmäßig JSON)
+
+    if ($id) {
+        // Datei einlesen
+        $filePath = getFilePath($id); // Funktion, die den Dateipfad für die gegebene ID ermittelt
+
+        if (file_exists($filePath)) {
+            $todos = file_get_contents($filePath);
+            $todosArray = json_decode($todos, true);
+
+            switch ($format) {
+                case 'pdf':
+                    downloadAsPDF($todosArray, $id);
+                    break;
+                case 'markdown':
+                    downloadAsMarkdown($todosArray, $id);
+                    break;
+                case 'excel':
+                    downloadAsExcel($todosArray, $id); // Download als CSV
+                    break;
+                default:
+                    downloadAsJSON($todosArray, $id); // Standardmäßig JSON
+            }
+        } else {
+            echo json_encode(['error' => 'To-Do-Liste nicht gefunden.']);
+        }
+    } else {
+        echo json_encode(['error' => 'Keine ID angegeben.']);
+    }
+    exit();
+}
+
+// Funktion zum Download als PDF
+function downloadAsPDF($todosArray, $id) {
+    // Beispiel-Inhalt für die PDF-Datei
+    $htmlContent = '<h1>To-Do Liste</h1><table border="1" style="width:100%; border-collapse: collapse;">';
+    $htmlContent .= '<tr><th>Aufgabe</th><th>Status</th></tr>';
+
+    foreach ($todosArray as $todo) {
+        $htmlContent .= '<tr><td>' . htmlspecialchars($todo['task']) . '</td><td>' . htmlspecialchars($todo['status']) . '</td></tr>';
+    }
+    $htmlContent .= '</table>';
+
+    // Temporäre HTML-Datei erstellen
+    $tempHtmlFile = tempnam(sys_get_temp_dir(), 'todos') . '.html';
+    file_put_contents($tempHtmlFile, $htmlContent);
+
+    // Header für den PDF-Download setzen
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="todos_' . $id . '.pdf"');
+
+    // HTML-Inhalt an den Browser senden und als PDF ausgeben
+    readfile($tempHtmlFile);
+    unlink($tempHtmlFile); // Temporäre Datei löschen
+    exit();
+}
+
+// Funktion zum Download als Markdown
+function downloadAsMarkdown($todosArray, $id) {
+    $markdownContent = "# To-Do Liste\n\n| Aufgabe | Status |\n| ------- | ------ |\n";
+
+    foreach ($todosArray as $todo) {
+        $markdownContent .= "| " . htmlspecialchars($todo['task']) . " | " . htmlspecialchars($todo['status']) . " |\n";
+    }
+
+    header('Content-Type: text/markdown');
+    header('Content-Disposition: attachment; filename="todos_' . $id . '.md"');
+    echo $markdownContent;
+    exit();
+}
+
+// Funktion zum Download als Excel (CSV)
+function downloadAsExcel($todosArray, $id) {
+    $csvContent = "Aufgabe,Status\n"; // CSV-Header
+
+    foreach ($todosArray as $todo) {
+        // Aufgaben und Status in CSV-Format hinzufügen
+        $csvContent .= '"' . htmlspecialchars($todo['task']) . '","' . htmlspecialchars($todo['status']) . "\"\n";
+    }
+
+    // Header für den CSV-Download setzen
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="todos_' . $id . '.csv"'); // Korrekte Dateiendung
+    header('Content-Length: ' . strlen($csvContent));
+    echo $csvContent;
+    exit();
+}
+
+// Funktion zum Download als JSON
+function downloadAsJSON($todosArray, $id) {
+    header('Content-Type: application/json');
+    header('Content-Disposition: attachment; filename="todos_' . $id . '.json"');
+    echo json_encode($todosArray);
+    exit();
+}

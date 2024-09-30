@@ -19,7 +19,7 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin: 0;
+    margin: 20px 0;
     padding: 0;
 }
 
@@ -64,7 +64,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 10px 0;
+    padding:0 10px;
 }
 
 h2 {
@@ -345,4 +345,40 @@ header h1 span.material-symbols-outlined {
 
 .glass {
     opacity: 0.1;
+}
+
+/* Allgemeine Stile für das Dropdown-Menü */
+.download-dropdown {
+    position: absolute;
+    top: 40px; /* Abstand nach unten vom Download-Button */
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 0;
+    list-style: none; /* Entfernt die Standard-Punkte der Liste */
+    z-index: 10; /* Über anderen Elementen positionieren */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Stile für die einzelnen Listenelemente */
+.download-dropdown li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Hover-Effekt */
+.download-dropdown li:hover {
+    background-color: #f0f0f0; /* Hintergrundfarbe bei Hover */
+}
+
+/* Sicherstellen, dass der Button und das Dropdown richtig positioniert sind */
+#download-btn {
+    position: relative;
+}
+
+.header .left {
+    display: inline-block;
+    position: relative;
 }

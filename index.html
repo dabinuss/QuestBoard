@@ -13,10 +13,18 @@
             <header>
                 <h1>
                     <div class="left">
-                        <!--
-                        <button id="generate-new-id" title="Generate new name" aria-label="Generate new name">
-                            <span class="material-symbols-outlined">refresh</span>
+                        <button id="download-btn" title="Download TODO" aria-label="Download TODO">
+                            <span class="material-symbols-outlined">download</span>
                         </button>
+
+                        <!-- Dropdown-Optionen zur Auswahl des Formats -->
+                        <ul id="download-options" class="download-dropdown" style="display: none;">
+                            <li data-format="pdf">PDF herunterladen</li>
+                            <li data-format="markdown">Markdown herunterladen</li>
+                            <li data-format="excel">Excel herunterladen</li>
+                        </ul>
+
+                        <!--
                         <button id="generate-new-id" title="Generate new name" aria-label="Generate new name">
                             <span class="material-symbols-outlined">refresh</span>
                         </button>
